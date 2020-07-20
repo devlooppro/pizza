@@ -14,6 +14,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::resource('pizzas', 'PizzaController')->only('index');
+Route::resource('ingredients', 'IngredientController')->only('index');
+
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });

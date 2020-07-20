@@ -11,7 +11,7 @@ class PizzaController extends BaseController
     {
         $skip = $this->calculateSkip();
         $limit = $this->calculateLimit();
-        $pizzas = Pizza::skip($skip)->limit($limit)->get();
+        $pizzas = Pizza::with('ingredients')->skip($skip)->limit($limit)->get();
 
         return PizzaResource::collection($pizzas);
     }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Ingredient;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
@@ -32,6 +33,9 @@ class PizzaResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'ingredients' => IngredientResource::collection($this->ingredients),
+            'price' => round(1.5 * $this->ingredients->sum(function (Ingredient $item) {
+                return $item->price;
+            }), 2)
         ];
     }
 }

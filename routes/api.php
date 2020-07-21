@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::resource('pizzas', 'PizzaController')->only('index');
+Route::post('pizzas/{pizza_id}/ingredients/{ingredient_id}', 'PizzaController@addIngredient');
+Route::delete('pizzas/{pizza_id}/ingredients/{ingredient_id}', 'PizzaController@removeIngredient');
 Route::resource('ingredients', 'IngredientController')->only('index');
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {

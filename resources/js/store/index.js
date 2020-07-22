@@ -3,6 +3,8 @@ import Vuex from "vuex";
 
 import * as pizza from "@/js/store/modules/pizza.js";
 
+import api from "@/js/api/request.js";
+
 Vue.use(Vuex);
 
 export default new Vuex.Store({
@@ -17,6 +19,12 @@ export default new Vuex.Store({
     actions: {
         showBasket({ commit }, show) {
             commit("SET_BASKET_SHOW", show);
+        },
+        addIngredient({ commit }, el) {
+            api.addIngredient(el.pizza_id, el.ingredient_id);
+        },
+        deleteIngredient({ commit }, el) {
+            api.deleteIngredient(el.pizza_id, el.ingredient_id);
         }
     },
     modules: {

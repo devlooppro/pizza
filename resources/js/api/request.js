@@ -13,4 +13,17 @@ export default {
     getPizza() {
         return apiClient.get("/api/pizzas");
     },
+    getIngredients() {
+        return apiClient.get("/api/ingredients");
+    },
+    addIngredient(pizza_id, ingredient_id) {
+        return apiClient.post(
+            "/api/pizzas/" + pizza_id + "/ingredients/" + ingredient_id
+        );
+    },
+    deleteIngredient(pizza_id, ingredient_id) {
+        return apiClient.delete(
+            "/api/pizzas/" + pizza_id + "/ingredients/" + ingredient_id
+        );
+    },
 };

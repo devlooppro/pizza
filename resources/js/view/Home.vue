@@ -21,6 +21,7 @@ export default {
     },
     created() {
         this.$store.dispatch("pizza/fetchPizzas");
+        this.$store.dispatch("pizza/fetchAllIngredients");
     }
 };
 </script>

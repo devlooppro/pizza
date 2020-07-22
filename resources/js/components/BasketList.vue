@@ -1,15 +1,26 @@
 <template>
-    <div class="basket__list list" :class="{ 'list--active': show }">
+    <div
+        v-if="pizza.ingredients !== undefined"
+        class="basket__list list"
+        :class="{ 'list--active': show }"
+    >
         <div class="list__top">
             <h2 class="title">Your order</h2>
             <button class="close" @click="closeBasket">
-                <img src="img/svg/close.svg" alt="" />
+                <img src="/img/svg/close.svg" alt="" />
             </button>
         </div>
         <div class="list__base">
-            <BasketCart />
+            <BasketCart
+                v-for="data in pizza.ingredients"
+                :key="data.id"
+                :ingredient="data"
+            />
         </div>
-        <div class="list__bottom"></div>
+        <div class="list__bottom">
+            <div class="title">TOTAL:</div>
+            <div class="value">{{ totalPrice.toFixed(2) }}</div>
+        </div>
     </div>
 </template>
 
@@ -21,7 +32,17 @@ export default {
         BasketCart
     },
     computed: {
-        ...mapState(["show"])
+        totalPrice() {
+            let ingredientsPrice = 0;
+            this.pizza.ingredients.forEach(element => {
+                ingredientsPrice += parseFloat(element.price);
+            });
+            return this.pizza.price + ingredientsPrice;
+        },
+        ...mapState({
+            show: state => state.show,
+            pizza: state => state.pizza.pizza
+        })
     },
     methods: {
         closeBasket() {
@@ -76,5 +97,23 @@ export default {
 }
 .list--active {
     right: 0;
+}
+.list__bottom {
+    position: absolute;
+    bottom: 0;
+    height: 50px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #000;
+    .title {
+        font-weight: bold;
+        font-size: 20px;
+        padding: 15px;
+    }
+    .value {
+        padding: 15px;
+    }
 }
 </style>

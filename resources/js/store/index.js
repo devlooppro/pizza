@@ -14,17 +14,31 @@ export default new Vuex.Store({
     mutations: {
         SET_BASKET_SHOW(state, show) {
             state.show = show;
+        },
+        SET_PRICE(state, val) {
+            state.totalPrice = val;
         }
     },
     actions: {
         showBasket({ commit }, show) {
             commit("SET_BASKET_SHOW", show);
         },
-        addIngredient({ commit }, el) {
-            api.addIngredient(el.pizza_id, el.ingredient_id);
+        addIngredient({ commit, dispatch }, el) {
+            api.addIngredient(el.pizza_id, el.ingredient_id).then(response => {
+                dispatch("pizza/updatePizza", response.data);
+            });
+            console.log(el.ingredient_price);
         },
-        deleteIngredient({ commit }, el) {
-            api.deleteIngredient(el.pizza_id, el.ingredient_id);
+        deleteIngredient({ commit, dispatch }, el) {
+            api.deleteIngredient(el.pizza_id, el.ingredient_id).then(
+                response => {
+                    dispatch("pizza/updatePizza", response.data);
+                }
+            );
+            console.log(el.ingredient_price);
+        },
+        setPrice({ commit }, val) {
+            commit("SET_PRICE", val);
         }
     },
     modules: {

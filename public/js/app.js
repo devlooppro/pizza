@@ -1982,15 +1982,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   components: {
     BasketCart: _js_components_BasketCart_vue__WEBPACK_IMPORTED_MODULE_1__["default"]
   },
-  computed: _objectSpread({
-    totalPrice: function totalPrice() {
-      var ingredientsPrice = 0;
-      this.pizza.ingredients.forEach(function (element) {
-        ingredientsPrice += parseFloat(element.price);
-      });
-      return this.pizza.price + ingredientsPrice;
-    }
-  }, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])({
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])({
     show: function show(state) {
       return state.show;
     },
@@ -2223,20 +2215,20 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     }
   })),
   methods: {
-    correctBasket: function correctBasket(pizza_id, ingredient_id) {
+    correctBasket: function correctBasket(pizza_id, ingredient_id, ingredient_price) {
       var checkbox = document.querySelector("#check" + ingredient_id);
-      console.log(checkbox.checked);
 
       if (checkbox.checked) {
-        console.log(pizza_id, ingredient_id);
         this.$store.dispatch("addIngredient", {
           pizza_id: pizza_id,
-          ingredient_id: ingredient_id
+          ingredient_id: ingredient_id,
+          ingredient_price: ingredient_price
         });
       } else {
         this.$store.dispatch("deleteIngredient", {
           pizza_id: pizza_id,
-          ingredient_id: ingredient_id
+          ingredient_id: ingredient_id,
+          ingredient_price: ingredient_price
         });
       }
     }
@@ -21638,7 +21630,7 @@ var render = function() {
             _c("div", { staticClass: "title" }, [_vm._v("TOTAL:")]),
             _vm._v(" "),
             _c("div", { staticClass: "value" }, [
-              _vm._v(_vm._s(_vm.totalPrice.toFixed(2)))
+              _vm._v(_vm._s(_vm.pizza.price))
             ])
           ])
         ]
@@ -21876,7 +21868,11 @@ var render = function() {
                           }
                         },
                         function($event) {
-                          return _vm.correctBasket(_vm.pizza.id, ingredient.id)
+                          return _vm.correctBasket(
+                            _vm.pizza.id,
+                            ingredient.id,
+                            ingredient.price
+                          )
                         }
                       ]
                     }
@@ -38868,6 +38864,9 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vuex__WEBPACK_IMPORTED_MODULE_1__
   mutations: {
     SET_BASKET_SHOW: function SET_BASKET_SHOW(state, show) {
       state.show = show;
+    },
+    SET_PRICE: function SET_PRICE(state, val) {
+      state.totalPrice = val;
     }
   },
   actions: {
@@ -38876,12 +38875,24 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vuex__WEBPACK_IMPORTED_MODULE_1__
       commit("SET_BASKET_SHOW", show);
     },
     addIngredient: function addIngredient(_ref2, el) {
-      var commit = _ref2.commit;
-      _js_api_request_js__WEBPACK_IMPORTED_MODULE_3__["default"].addIngredient(el.pizza_id, el.ingredient_id);
+      var commit = _ref2.commit,
+          dispatch = _ref2.dispatch;
+      _js_api_request_js__WEBPACK_IMPORTED_MODULE_3__["default"].addIngredient(el.pizza_id, el.ingredient_id).then(function (response) {
+        dispatch("pizza/updatePizza", response.data);
+      });
+      console.log(el.ingredient_price);
     },
     deleteIngredient: function deleteIngredient(_ref3, el) {
-      var commit = _ref3.commit;
-      _js_api_request_js__WEBPACK_IMPORTED_MODULE_3__["default"].deleteIngredient(el.pizza_id, el.ingredient_id);
+      var commit = _ref3.commit,
+          dispatch = _ref3.dispatch;
+      _js_api_request_js__WEBPACK_IMPORTED_MODULE_3__["default"].deleteIngredient(el.pizza_id, el.ingredient_id).then(function (response) {
+        dispatch("pizza/updatePizza", response.data);
+      });
+      console.log(el.ingredient_price);
+    },
+    setPrice: function setPrice(_ref4, val) {
+      var commit = _ref4.commit;
+      commit("SET_PRICE", val);
     }
   },
   modules: {
@@ -38933,15 +38944,23 @@ var actions = {
   },
   fetchPizza: function fetchPizza(_ref2, id) {
     var commit = _ref2.commit,
+        dispatch = _ref2.dispatch,
         getters = _ref2.getters;
     var pizza = getters.getPizzaById(id);
     commit("SET_PIZZA", pizza);
+    dispatch("setPrice", pizza.price, {
+      root: true
+    });
   },
   fetchAllIngredients: function fetchAllIngredients(_ref3) {
     var commit = _ref3.commit;
     return _js_api_request_js__WEBPACK_IMPORTED_MODULE_0__["default"].getIngredients().then(function (response) {
       commit("SET_IGREDIENTS", response.data);
     });
+  },
+  updatePizza: function updatePizza(_ref4, data) {
+    var commit = _ref4.commit;
+    commit("SET_PIZZA", data.data);
   }
 };
 var getters = {

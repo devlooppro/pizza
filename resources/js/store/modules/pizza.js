@@ -26,14 +26,18 @@ export const actions = {
             commit("SET_PIZZAS", response.data);
         });
     },
-    fetchPizza({ commit, getters }, id) {
+    fetchPizza({ commit, dispatch, getters }, id) {
         let pizza = getters.getPizzaById(id);
         commit("SET_PIZZA", pizza);
+        dispatch("setPrice", pizza.price, { root: true });
     },
     fetchAllIngredients({ commit }) {
         return api.getIngredients().then(response => {
             commit("SET_IGREDIENTS", response.data);
         });
+    },
+    updatePizza({ commit }, data) {
+        commit("SET_PIZZA", data.data);
     }
 };
 

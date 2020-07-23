@@ -14,7 +14,7 @@
                         :id="'check' + ingredient.id"
                         v-model="pizza.ingredients"
                         :value="ingredient"
-                        @change="correctBasket(pizza.id, ingredient.id)"
+                        @change="correctBasket(pizza.id, ingredient.id, ingredient.price)"
                     />
                     {{ ingredient.name }}
                     <span class="price">{{ ingredient.price }}</span>
@@ -27,64 +27,64 @@
 <script>
 import { mapState } from "vuex";
 export default {
-    async created() {
-        await this.$store.dispatch("pizza/fetchPizza", this.$route.params.id);
+  async created() {
+    await this.$store.dispatch("pizza/fetchPizza", this.$route.params.id);
+  },
+  // data() {
+  //     return {
+  //         ing: []
+  //     };
+  // },
+  computed: {
+    ...mapState({
+      pizza: (state) => state.pizza.pizza,
+      ingredients: (state) => state.pizza.ingredients,
+    }),
+  },
+  methods: {
+    correctBasket(pizza_id, ingredient_id, ingredient_price) {
+      let checkbox = document.querySelector("#check" + ingredient_id);
+      if (checkbox.checked) {
+        this.$store.dispatch("addIngredient", {
+          pizza_id,
+          ingredient_id,
+          ingredient_price,
+        });
+      } else {
+        this.$store.dispatch("deleteIngredient", {
+          pizza_id,
+          ingredient_id,
+          ingredient_price,
+        });
+      }
     },
-    // data() {
-    //     return {
-    //         ing: []
-    //     };
-    // },
-    computed: {
-        ...mapState({
-            pizza: state => state.pizza.pizza,
-            ingredients: state => state.pizza.ingredients
-        })
-    },
-    methods: {
-        correctBasket(pizza_id, ingredient_id) {
-            let checkbox = document.querySelector("#check" + ingredient_id);
-            console.log(checkbox.checked);
-            if (checkbox.checked) {
-                console.log(pizza_id, ingredient_id);
-                this.$store.dispatch("addIngredient", {
-                    pizza_id,
-                    ingredient_id
-                });
-            } else {
-                this.$store.dispatch("deleteIngredient", {
-                    pizza_id,
-                    ingredient_id
-                });
-            }
-        }
-    }
+  },
 };
 </script>
 
 <style lang="scss" scoped>
 .container {
+  display: flex;
+  max-width: 600px;
+  margin: auto;
+  .main {
+    padding: 20px;
     display: flex;
-    max-width: 600px;
+    justify-content: space-between;
     margin: auto;
-    .main {
-        padding: 20px;
-        display: flex;
-        justify-content: space-between;
-        margin: auto;
-        width: 100%;
-        .main__title {
-            margin: 0;
-        }
-        .main__right-block {
-            display: flex;
-            flex-direction: column;
-            label {
-                .price {
-                    color: #d32f2f;
-                }
-            }
-        }
+    width: 100%;
+    .main__title {
+      margin: 0;
     }
+    .main__right-block {
+      display: flex;
+      flex-direction: column;
+      label {
+        .price {
+          color: #d32f2f;
+        }
+      }
+    }
+  }
 }
 </style>
